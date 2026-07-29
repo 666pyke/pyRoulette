@@ -1,0 +1,16 @@
+name: pyRoulette
+version: '${project.version}'
+main: org.me.pyke.pyRoulette.PyRoulette
+api-version: '1.21'
+softdepend:
+  - Vault
+commands:
+  pyroulette:
+    description: Manage pyRoulette wheels.
+    usage: /pyroulette <create|remove|list|reload>
+    aliases:
+      - roulette
+permissions:
+  pyroulette.admin:
+    description: Allows managing roulette wheels.
+    default: op
