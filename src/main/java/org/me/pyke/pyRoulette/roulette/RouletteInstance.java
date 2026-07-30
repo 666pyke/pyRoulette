@@ -1,7 +1,5 @@
 package org.me.pyke.pyRoulette.roulette;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Location;
@@ -22,6 +20,7 @@ import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.me.pyke.pyRoulette.PyRoulette;
+import org.me.pyke.pyRoulette.compat.SkullTextureApplier;
 import org.me.pyke.pyRoulette.economy.EconomyManager;
 import org.me.pyke.pyRoulette.lang.Lang;
 
@@ -495,7 +494,7 @@ public final class RouletteInstance {
 
         TextDisplay textDisplay = (TextDisplay) world.spawnEntity(textLoc, EntityType.TEXT_DISPLAY);
         textDisplay.setPersistent(false);
-        textDisplay.text(Lang.component(Lang.placeholders(plugin.getConfig().getString("display.number-text", "&6{number}"), Map.of("number", pocket.label()))));
+        textDisplay.setText(Lang.color(Lang.placeholders(plugin.getConfig().getString("display.number-text", "&6{number}"), Map.of("number", pocket.label()))));
         textDisplay.setBillboard(billboard(plugin.getConfig().getString("display.number-billboard", "VERTICAL")));
         textDisplay.setBrightness(new Display.Brightness(15, 15));
         textDisplay.setSeeThrough(plugin.getConfig().getBoolean("display.number-see-through", false));
@@ -567,7 +566,7 @@ public final class RouletteInstance {
         hologram.setSeeThrough(plugin.getConfig().getBoolean("hologram.see-through", false));
         hologram.setDefaultBackground(false);
         hologram.setBackgroundColor(org.bukkit.Color.fromARGB(plugin.getConfig().getInt("hologram.background-argb", 0)));
-        hologram.text(hologramText());
+        hologram.setText(hologramText());
         centerEntities.add(hologram);
     }
 
@@ -654,7 +653,7 @@ public final class RouletteInstance {
         applyPocketScale(winnerIndex, (float) plugin.getConfig().getDouble("display.winner-scale", 0.75));
         Entity text = entities.get(winnerIndex * 3 + 1);
         if (text instanceof TextDisplay textDisplay) {
-            textDisplay.text(Lang.component(Lang.placeholders(plugin.getConfig().getString("display.winning-text", "&aWinner: &f{result}"), Map.of("result", winner.label()))));
+            textDisplay.setText(Lang.color(Lang.placeholders(plugin.getConfig().getString("display.winning-text", "&aWinner: &f{result}"), Map.of("result", winner.label()))));
         }
     }
 
@@ -667,7 +666,7 @@ public final class RouletteInstance {
         applyPocketScale(highlightedWinnerIndex, pocketScale(pocket.color()));
         Entity text = entities.get(highlightedWinnerIndex * 3 + 1);
         if (text instanceof TextDisplay textDisplay) {
-            textDisplay.text(Lang.component(Lang.placeholders(plugin.getConfig().getString("display.number-text", "&6{number}"), Map.of("number", pocket.label()))));
+            textDisplay.setText(Lang.color(Lang.placeholders(plugin.getConfig().getString("display.number-text", "&6{number}"), Map.of("number", pocket.label()))));
         }
         highlightedWinnerIndex = -1;
     }
@@ -754,11 +753,11 @@ public final class RouletteInstance {
         }
         Entity entity = centerEntities.get(0);
         if (entity instanceof TextDisplay textDisplay) {
-            textDisplay.text(hologramText());
+            textDisplay.setText(hologramText());
         }
     }
 
-    private net.kyori.adventure.text.Component hologramText() {
+    private String hologramText() {
         List<String> lines = plugin.getConfig().getStringList("hologram.lines");
         if (lines.isEmpty()) {
             lines = List.of("&6pyRoulette", "&7Bets: &f{total_bets}", "&7Amount: &f{amount}", "&7Spin: &f{time_until_spin}");
@@ -773,7 +772,7 @@ public final class RouletteInstance {
         for (String line : lines) {
             parsed.add(Lang.placeholders(line, placeholders));
         }
-        return Lang.component(String.join("\n", parsed));
+        return Lang.color(String.join("\n", parsed));
     }
 
     private double totalBetAmount() {
@@ -932,15 +931,7 @@ public final class RouletteInstance {
         String texture = plugin.getConfig().getString("textures." + key, "");
         if (texture != null && !texture.isBlank()) {
             ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-            SkullMeta meta = (SkullMeta) head.getItemMeta();
-            if (meta == null) {
-                return head;
-            }
-            PlayerProfile profile = Bukkit.createProfile(UUID.nameUUIDFromBytes(("pyroulette-" + key).getBytes()));
-            profile.setProperty(new ProfileProperty("textures", texture));
-            meta.setPlayerProfile(profile);
-            head.setItemMeta(meta);
-            return head;
+            return SkullTextureApplier.apply(head, texture, key);
         }
 
         Material material = Material.matchMaterial(plugin.getConfig().getString("textures.fallback-material." + key, ""));

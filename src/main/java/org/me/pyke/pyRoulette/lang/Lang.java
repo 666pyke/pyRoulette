@@ -1,7 +1,5 @@
 package org.me.pyke.pyRoulette.lang;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.me.pyke.pyRoulette.PyRoulette;
@@ -13,7 +11,6 @@ import java.util.regex.Pattern;
 
 public final class Lang {
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
-    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     private Lang() {
     }
@@ -34,10 +31,6 @@ public final class Lang {
         }
         matcher.appendTail(buffer);
         return ChatColor.translateAlternateColorCodes('&', buffer.toString());
-    }
-
-    public static Component component(String text) {
-        return LEGACY.deserialize(color(text));
     }
 
     public static String placeholders(String input, Map<String, String> placeholders) {

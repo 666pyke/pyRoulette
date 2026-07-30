@@ -70,7 +70,7 @@ public final class RouletteMenuManager implements Listener {
 
     private void openSelection(Player player, RouletteInstance roulette) {
         RouletteMenuHolder holder = new RouletteMenuHolder(roulette.definition().id());
-        Inventory inventory = Bukkit.createInventory(holder, inventorySize("gui.selection.size", 54), Lang.component(plugin.getConfig().getString("gui.selection.title", "&8Roulette - Choose Bet")));
+        Inventory inventory = Bukkit.createInventory(holder, inventorySize("gui.selection.size", 54), Lang.color(plugin.getConfig().getString("gui.selection.title", "&8Roulette - Choose Bet")));
         holder.inventory(inventory);
         fill(inventory, "gui.selection.filler");
 
@@ -208,8 +208,8 @@ public final class RouletteMenuManager implements Listener {
                 "color", color,
                 "multiplier", String.valueOf(multiplier(BetType.NUMBER))
         );
-        meta.displayName(Lang.component(Lang.placeholders(plugin.getConfig().getString("gui.selection.number-bet.name", "{color}{number}"), placeholders)));
-        meta.lore(lore(plugin.getConfig().getStringList("gui.selection.number-bet.lore"), placeholders));
+        meta.setDisplayName(Lang.color(Lang.placeholders(plugin.getConfig().getString("gui.selection.number-bet.name", "{color}{number}"), placeholders)));
+        meta.setLore(lore(plugin.getConfig().getStringList("gui.selection.number-bet.lore"), placeholders));
         item.setItemMeta(meta);
         return item;
     }
@@ -221,7 +221,7 @@ public final class RouletteMenuManager implements Listener {
         if (meta == null) {
             return;
         }
-        meta.displayName(Lang.component(plugin.getConfig().getString(path + ".name", " ")));
+        meta.setDisplayName(Lang.color(plugin.getConfig().getString(path + ".name", " ")));
         item.setItemMeta(meta);
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, item);
@@ -234,16 +234,16 @@ public final class RouletteMenuManager implements Listener {
         if (meta == null) {
             return item;
         }
-        meta.displayName(Lang.component(Lang.placeholders(plugin.getConfig().getString(path + ".name", ""), placeholders)));
-        meta.lore(lore(plugin.getConfig().getStringList(path + ".lore"), placeholders));
+        meta.setDisplayName(Lang.color(Lang.placeholders(plugin.getConfig().getString(path + ".name", ""), placeholders)));
+        meta.setLore(lore(plugin.getConfig().getStringList(path + ".lore"), placeholders));
         item.setItemMeta(meta);
         return item;
     }
 
-    private List<net.kyori.adventure.text.Component> lore(List<String> lines, Map<String, String> placeholders) {
-        List<net.kyori.adventure.text.Component> lore = new ArrayList<>();
+    private List<String> lore(List<String> lines, Map<String, String> placeholders) {
+        List<String> lore = new ArrayList<>();
         for (String line : lines) {
-            lore.add(Lang.component(Lang.placeholders(line, placeholders)));
+            lore.add(Lang.color(Lang.placeholders(line, placeholders)));
         }
         return lore;
     }
